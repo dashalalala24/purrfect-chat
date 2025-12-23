@@ -323,15 +323,6 @@ export default class App {
       default:
         break;
     }
-
-    // const footerLinks = document.querySelectorAll<HTMLAnchorElement>('.footer-link');
-    // footerLinks.forEach((link) => {
-    //   link.addEventListener('click', (e: MouseEvent) => {
-    //     e.preventDefault();
-    //     const page = link.dataset.page as TPageName | undefined;
-    //     if (page) this.changePage(page);
-    //   });
-    // });
   }
 
   private changePage(page: TPageName): void {
