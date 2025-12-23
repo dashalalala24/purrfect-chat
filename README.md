@@ -2,6 +2,10 @@
 
 Учебный мессенджер: страницы авторизации и регистрации, чат, страница профиля, ошибки 404 и 5хх. Проект собран с помощью Handlebars и Vite.
 
+## Ссылка на Netlify
+
+purrfect-chat.netlify.app
+
 ## Ссылка на прототипы экранов
 
 https://www.figma.com/design/DODcit19umTYc0WJdGHJ1w/Untitled?node-id=0-1&p=f&t=2fyJf9Iomdr3u6C4-0
