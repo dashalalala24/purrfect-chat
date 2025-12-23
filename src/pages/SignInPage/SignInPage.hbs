@@ -1,0 +1,22 @@
+
+ <main class='auth'>
+  {{> AuthCover }}
+
+  <div class='auth__form-cover'>
+    <div class='auth__form-container'>
+      <h2 class='auth__form-title'>Welcome back!</h2>
+
+      <p class='auth__form-subtitle'>Sign in to continue chatting</p>
+
+      <form id='sign-in-form' class='auth__form'>
+        {{> Input id='sign-in-email' type='email' placeholder='your@email.com' label='Email'}}
+        {{> Input id='sign-in-password' type='password' placeholder='password' label='Password'  }}
+        {{> Button type='submit' text='Sign in' fullwidth=true  }}
+      </form>
+
+      <p class='auth__form-subtext'>Don't have an account? 
+        <a id='link-to-sign-up' href='{{link}}'>Sign up</a>
+      </p>
+    </div>
+  </div>
+</main>

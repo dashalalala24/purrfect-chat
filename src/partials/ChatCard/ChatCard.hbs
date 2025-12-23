@@ -1,0 +1,22 @@
+<div id='{{id}}' class='chat-card {{#if selected}}chat-card_selected{{/if}}'>
+  {{> Avatar src=avatarSrc username=username alt=username class='chat-card__avatar' }}
+  
+  <div class='chat-card__container'>
+
+    <div class='chat-card__row '>
+      <p class='wrapped-text chat-card__username'>{{username}}</p>
+      <p class='chat-card__datetime'>{{lastMessageDateTime}}</p>
+    </div>
+
+    <div class='chat-card__row '>
+      <p class='wrapped-text chat-card__text'>{{messagePreview}}</p>
+
+      {{#if unreadMessagesCountLabel}}
+        <div class='chat-card__counter'>
+          <span class='chat-card__counter-text'>{{unreadMessagesCountLabel}}</span>
+        </div>
+      {{/if}}
+
+    </div>
+  </div>
+</div>

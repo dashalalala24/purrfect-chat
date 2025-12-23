@@ -1,0 +1,6 @@
+<button id='{{id}}' type='{{type}}' class='button {{#if variant}}button_variant_{{variant}}{{/if}} {{#if fullwidth}}button_fullwidth{{/if}} {{class}}'>
+  {{#if iconSrc}}
+    <span class='button__icon' style="mask-image: url('{{iconSrc}}')"></span>
+  {{/if}}
+  <span class='button__text'>{{text}}</span>
+</button>

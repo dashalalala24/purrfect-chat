@@ -1,0 +1,143 @@
+:root {
+  --background: #fcfaf7;
+  --foreground: #3a2430;
+
+  --card: #fdfcfb;
+  --card-foreground: #3a2430;
+
+  --primary: #f03b82;
+  --primary-foreground: #ffffff;
+
+  --secondary: #ffb259;
+  --secondary-foreground: #3a2430;
+
+  --muted: #f3ede8;
+  --muted-foreground: #7a6670;
+
+  --accent: #fde8f1;
+  --accent-foreground: #c0195d;
+
+  --error: #f23d3d;
+  --error-foreground: #ffffff;
+
+  --border: #ead1dd;
+  --input: #efdbe5;
+  --ring: #f03b82;
+
+  /* Custom colors */
+  --pink: #f03b82;
+  --pink-light: #f9d9e6;
+  --pink-dark: #e0256f;
+  --orange: #ff9f2d;
+  --orange-light: #ffe8cf;
+  --cream: #fff4ec;
+  --cream-dark: #efe6dd;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #f03b82, #ff9f2d);
+  --gradient-soft: linear-gradient(135deg, #fde8f1, #fff0da);
+  --gradient-message-outgoing: linear-gradient(135deg, #ee3f7c, #ffa03a);
+  --gradient-message-incoming: linear-gradient(135deg, #fdfcfb, #fcf8f9);
+
+  /* Shadows */
+  --shadow-soft: 0 4px 20px -4px rgba(191, 64, 128, 0.15);
+  --shadow-card: 0 2px 12px -2px rgba(191, 64, 128, 0.1);
+  --shadow-button: 0 4px 16px -4px rgba(204, 26, 102, 0.4);
+  --shadow-input: 0 2px 8px -2px rgba(191, 64, 128, 0.08);
+
+  --sidebar-background: #fdfcfb;
+  --sidebar-foreground: #3a2430;
+  --sidebar-primary: #f03b82;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #fde8f1;
+  --sidebar-accent-foreground: #c0195d;
+  --sidebar-border: #efdbe5;
+  --sidebar-ring: #f03b82;
+
+  --font-family: 'Nunito', sans-serif;
+
+  --font-size-xxl: 3rem;
+  --font-size-xl: 1.5rem;
+  --font-size-l: 1.25rem;
+  --font-size-m: 1rem;
+  --font-size-s: 0.875rem;
+  --font-size-xs: 0.75rem;
+  --font-size-xxs: 0.625rem;
+
+  --line-height-xxl: 3rem;
+  --line-height-xl: 2rem;
+  --line-height-l: 1.75rem;
+  --line-height-m: 1.5rem;
+  --line-height-s: 1.25rem;
+  --line-height-xs: 1rem;
+  --line-height-xxs: 0.625rem;
+}
+
+body {
+  font-family: var(--font-family);
+
+  color: var(--foreground);
+  background-color: var(--background);
+
+  padding: 0;
+  margin: 0;
+}
+
+main {
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ul,
+ol,
+li {
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+}
+
+h1 {
+  font-size: var(--font-size-xxl);
+  line-height: var(--line-height-xxl);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-xl);
+  font-weight: 700;
+}
+
+p {
+  font-size: var(--font-size-m);
+  line-height: var(--line-height-m);
+}
+
+label {
+  font-size: var(--font-size-s);
+  line-height: var(--line-height-s);
+  color: var(--foreground);
+  padding-bottom: 0.25rem;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--secondary);
+}
+
+.wrapped-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

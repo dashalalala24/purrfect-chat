@@ -1,0 +1,18 @@
+<div class='error-screen__image'>
+  <span
+    class='error-screen__image-main'
+    {{#if imgSrc}}
+      style="--error-image: url('{{imgSrc}}')"
+    {{/if}}
+  ></span>
+  <span
+    class='error-screen__animation'
+    {{#if animationImgSrc}}
+      style="--error-animation-image: url('{{animationImgSrc}}')"
+    {{/if}}
+  ></span>
+</div>
+
+<h1 class='error-screen__error-code'>{{errorCode}}</h1>
+<h2 class='error-screen__title'>{{title}}</h2>
+<p class='error-screen__subtitle'>{{subtitle}}</p>

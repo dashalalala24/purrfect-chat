@@ -1,0 +1,18 @@
+<div class='input__container {{class}}'>
+  {{#if label}}
+    <label for='{{id}}' class='input__label'>{{label}}</label>
+   {{/if}}
+   
+  <input
+    id='{{id}}'
+    name='{{name}}'
+    type='{{type}}'
+    placeholder='{{placeholder}}'
+    value='{{value}}'
+    class='input {{#if errorMessage}}input_error{{/if}} {{inputClass}}'
+  />
+
+  {{#unless noValidation}}
+    <span class='input__error-message'>{{errorMessage}}</span>
+  {{/unless}}
+</div>
