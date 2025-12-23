@@ -67,35 +67,21 @@ export default class App {
   render(): void {
     switch (this.state.currentPage) {
       case 'routes': {
-        const template = Handlebars.compile(Pages.RoutesPage);
-
-        this.appElement.innerHTML = template({});
-
-        this.attachEventListeners();
+        this.createPage(Pages.RoutesPage);
         break;
       }
 
       case 'signIn': {
-        const template = Handlebars.compile(Pages.SignInPage);
-
-        this.appElement.innerHTML = template({});
-
-        this.attachEventListeners();
+        this.createPage(Pages.SignInPage);
         break;
       }
 
       case 'signUp': {
-        const template = Handlebars.compile(Pages.SignUpPage);
-
-        this.appElement.innerHTML = template({});
-
-        this.attachEventListeners();
+        this.createPage(Pages.SignUpPage);
         break;
       }
 
       case 'chats': {
-        const template = Handlebars.compile(Pages.ChatsPage);
-
         const chatsWithMeta = this.state.chats.map((chatMock) => {
           const lastMessage = chatMock.messages[chatMock.messages.length - 1];
 
@@ -119,9 +105,7 @@ export default class App {
           selectedChat: this.state.selectedChat,
         };
 
-        this.appElement.innerHTML = template(pageContext);
-
-        this.attachEventListeners();
+        this.createPage(Pages.ChatsPage, pageContext);
         break;
       }
 
@@ -129,35 +113,24 @@ export default class App {
         if (!this.state.profile) {
           this.changePage('signIn');
         } else {
-          const template = Handlebars.compile(Pages.ProfilePage);
-
           const pageContext: TProfilePageContext = {
             profile: this.state.profile,
             isEditMode: this.state.isProfileEditMode,
           };
 
-          this.appElement.innerHTML = template(pageContext);
-
-          this.attachEventListeners();
+          this.createPage(Pages.ProfilePage, pageContext);
         }
         break;
       }
 
       case 'notFound': {
-        const template = Handlebars.compile(Pages.NotFoundPage);
-
-        this.appElement.innerHTML = template({});
-
-        this.attachEventListeners();
+        this.createPage(Pages.NotFoundPage);
         break;
       }
 
       case 'serverError': {
-        const template = Handlebars.compile(Pages.ServerErrorPage);
+        this.createPage(Pages.ServerErrorPage);
 
-        this.appElement.innerHTML = template({});
-
-        this.attachEventListeners();
         break;
       }
 
@@ -190,6 +163,11 @@ export default class App {
 
         const signInForm = document.querySelector<HTMLFormElement>('#sign-in-form');
 
+        if (signInForm) {
+          this.attachRequiredInputListeners(signInForm);
+          this.syncSubmitButtonsState(signInForm);
+        }
+
         navigateToSignUpLink?.addEventListener('click', (e: PointerEvent) => {
           e.preventDefault();
           this.changePage('signUp');
@@ -197,6 +175,7 @@ export default class App {
 
         signInForm?.addEventListener('submit', (e: SubmitEvent) => {
           e.preventDefault();
+          if (!this.validateRequiredInputs(signInForm)) return;
           this.changePage('chats');
         });
 
@@ -207,6 +186,11 @@ export default class App {
 
         const signUpForm = document.querySelector<HTMLFormElement>('#sign-up-form');
 
+        if (signUpForm) {
+          this.attachRequiredInputListeners(signUpForm);
+          this.syncSubmitButtonsState(signUpForm);
+        }
+
         navigateToSignInLink?.addEventListener('click', (e: PointerEvent) => {
           e.preventDefault();
           this.changePage('signIn');
@@ -214,6 +198,7 @@ export default class App {
 
         signUpForm?.addEventListener('submit', (e: SubmitEvent) => {
           e.preventDefault();
+          if (!this.validateRequiredInputs(signUpForm)) return;
           this.changePage('chats');
         });
 
@@ -271,8 +256,14 @@ export default class App {
 
         setProfileInputsDisabled(!this.state.isProfileEditMode);
 
+        if (profileForm) {
+          this.attachRequiredInputListeners(profileForm);
+          this.syncSubmitButtonsState(profileForm);
+        }
+
         const resetProfileForm = () => {
           this.state.isProfileEditMode = false;
+          if (profileForm) this.clearRequiredInputErrors(profileForm);
           this.render();
         };
 
@@ -284,6 +275,7 @@ export default class App {
 
         profileForm?.addEventListener('submit', (e: SubmitEvent) => {
           e.preventDefault();
+          if (!profileForm || !this.validateRequiredInputs(profileForm)) return;
           this.state.isProfileEditMode = false;
           this.render();
         });
@@ -325,6 +317,14 @@ export default class App {
     }
   }
 
+  private createPage(page: string, pageContext?: any): void {
+    const template = Handlebars.compile(page);
+
+    this.appElement.innerHTML = template(pageContext || {});
+
+    this.attachEventListeners();
+  }
+
   private changePage(page: TPageName): void {
     this.state.currentPage = page;
     this.render();
@@ -354,5 +354,80 @@ export default class App {
     this.state.selectedChat = updatedChats.find((chat) => chat.id === this.state.selectedChat?.id) ?? null;
 
     this.render();
+  }
+
+  private validateRequiredInputs(form: HTMLFormElement): boolean {
+    const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('input'));
+
+    const skipPasswordValidation = form.id === 'profile-form';
+
+    let isValid = true;
+
+    inputs.forEach((input) => {
+      if (input.disabled || input.type === 'file') return;
+
+      if (skipPasswordValidation && input.type === 'password') return;
+
+      const value = input.value.trim();
+
+      if (!value) {
+        isValid = false;
+        input.classList.add('input_error');
+      } else {
+        input.classList.remove('input_error');
+      }
+    });
+
+    this.syncSubmitButtonsState(form);
+    return isValid;
+  }
+
+  private attachRequiredInputListeners(form: HTMLFormElement): void {
+    const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('input'));
+
+    const skipPasswordValidation = form.id === 'profile-form';
+
+    inputs.forEach((input) => {
+      input.addEventListener('input', () => {
+        if (input.disabled || input.type === 'file') return;
+
+        if (skipPasswordValidation && input.type === 'password') return;
+
+        if (input.value.trim()) {
+          input.classList.remove('input_error');
+        }
+
+        this.syncSubmitButtonsState(form);
+      });
+    });
+  }
+
+  private clearRequiredInputErrors(form: HTMLFormElement): void {
+    const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('input'));
+
+    inputs.forEach((input) => {
+      input.classList.remove('input_error');
+    });
+
+    this.syncSubmitButtonsState(form);
+  }
+
+  private syncSubmitButtonsState(form: HTMLFormElement): void {
+    const inputs = Array.from(form.querySelectorAll<HTMLInputElement>('input'));
+    const submitButtons = Array.from(form.querySelectorAll<HTMLButtonElement>('button[type="submit"]'));
+
+    const skipPasswordValidation = form.id === 'profile-form';
+
+    const hasEmptyRequired = inputs.some((input) => {
+      if (input.disabled || input.type === 'file') return false;
+
+      if (skipPasswordValidation && input.type === 'password') return false;
+
+      return input.value.trim().length === 0;
+    });
+
+    submitButtons.forEach((button) => {
+      button.disabled = hasEmptyRequired;
+    });
   }
 }
