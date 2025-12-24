@@ -1,0 +1,14 @@
+{{!-- страница со всеми роутами для удобства навигации на первом спринте, будет удалена после ревью --}}
+
+<div style="height: 100vh; width: 100vw; display: flex; gap: 1rem; flex-direction: column; align-items: center; justify-content: center;">
+  <p>Все страницы:</p>
+  <div style="display: flex; gap: 1rem; align-items: center; justify-content: center; margin: 0.5rem 0 4rem">
+    {{> Button id='route-sign-in' type='button' text='sign in page'}}
+    {{> Button id='route-sign-up' type='button' text='sign up page'}}
+    {{> Button id='route-chats' type='button' text='chats page'}}
+    {{> Button id='route-profile' type='button' text='profile page'}}
+    {{> Button id='route-not-found' type='button' text='404 error page'}}
+    {{> Button id='route-server-error' type='button' text='5xx error page'}}
+  </div>
+  <p>Для возврата на эту страницу просто нажмите F5</p>
+</div>

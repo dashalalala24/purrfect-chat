@@ -1,0 +1,70 @@
+<main class='chats'>
+  <div class='chats__sidebar'>
+
+    <div class='chats__header chats__sidebar-header'>
+      <h1 class='chats__sidebar-title'>Purrfect Chat</h1>
+      <nav class='chats__sidebar-header-navigation'>
+        <ul class='chats__sidebar-header-navigation-list'>
+          <li class='chats__sidebar-header-navigation-list-item'>
+            {{> IconButton id='profile' ariaLabel='Profile' class='chats__sidebar-header-button' iconSrc='/icons/user.svg' }}
+          </li>
+          <li class='chats__sidebar-header-navigation-list-item'>
+            {{> IconButton id='settings' ariaLabel='Setting' class='chats__sidebar-header-button' iconSrc='/icons/gear.svg' }}
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    {{> Input id='chats-search' type='text' placeholder='Search chat' class='chats__sidebar-chats-search'  noValidation='true' autocomplete='off' }}
+
+    <div class='chats__sidebar-chats-container'>
+      <ul class='chats__sidebar-chats-list'>
+        {{#each chats}}
+        <li class='chats__sidebar-chats-list-item'>
+          {{> ChatCard id=id avatarSrc=user.avatarSrc username=user.username lastMessageDateTime=lastMessageDateTime messagePreview=messagePreview unreadMessagesCountLabel=unreadMessagesCountLabel selected=(isEqual id ../selectedChat.id) }}
+        </li>
+        {{/each }}
+      </ul>
+    </div>
+
+    <div class='chats__footer chats__sidebar-chats-button-container'>
+      {{> Button id='new-chat' type='button' text='New chat' class='chats__sidebar-chats-button' fullwidth=true}}
+    </div>
+
+  </div>
+  
+  {{#if selectedChat}}
+    <div class='chats__chat'>
+      <div class='chats__header chats__chat-header'>
+        <div class='chats__chat-header-user'>
+          {{> Avatar src=selectedChat.user.avatarSrc username=selectedChat.user.username alt=selectedChat.user.username class='chats__chat-avatar' }}
+          <h2 class='chats__chat-username'>{{selectedChat.user.username}}</h2>
+        </div>
+
+         {{> IconButton id='settings' ariaLabel='Setting' class='chats__sidebar-header-button' iconSrc='/icons/ellipsis-vertical.svg' }}
+      </div>
+
+      <div class='chats__chat-messages'>
+        <p class='chats__chat-messages_date'>Today<p>
+        {{#each selectedChat.messages}}
+          <div class='chats__message chats__message_{{type}}'>
+            <p class='chats__message-text'>{{text}}</p>
+            <span class='chats__message-time'>{{dateTime}}</span>
+          </div>
+        {{/each}}
+      </div>
+
+      <form id='chat-message-form' class='chats__footer chats__chat-message-input-container'>
+        {{> Input id='chat-message-input' name='message' type='text' placeholder='Write a message...' inputClass='chats__chat-message-input' noValidation='true' autocomplete='off' }}
+        {{> IconButton id='send-message' ariaLabel='Send message' type='submit' iconSrc='/icons/send.svg' class='icon-button_contained chats__chat-message-input-button' }}
+      </form>
+    </div>
+  {{else}}
+    <div class='chats_chat-empty'>
+      <div class='chats_chat-empty-image'></div>
+      <h2 class='chats_chat-empty-text'>Select a chat to start messaging</h2>
+      <p class='chats_chat-empty-text'>Pick a conversation from the list or start a new one to connect with friends!</p>
+    </div>
+  {{/if}}
+  
+</main>
