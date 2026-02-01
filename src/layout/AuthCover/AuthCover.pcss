@@ -1,0 +1,59 @@
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 10%;
+  }
+
+  25% {
+    background-position: 50% 40%;
+  }
+
+  50% {
+    background-position: 95% 70%;
+  }
+
+  75% {
+    background-position: 0% 90%;
+  }
+
+  100% {
+    background-position: 0% 10%;
+  }
+}
+
+.auth-cover {
+  position: relative;
+  width: 50%;
+  min-height: 100vh;
+  padding-left: 5%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: var(--background);
+  background: radial-gradient(#f03b82, #ffa333, #f8dde8, #f03b82, #ffa333, #f03b82);
+  background-size: 2000% 2000%;
+  animation: gradient-animation 50s ease infinite;
+}
+
+.auth-cover__title {
+  padding-bottom: 1rem;
+}
+
+.auth-cover__list {
+  padding: 2rem 0 6rem 1rem;
+}
+
+.auth-cover__list-item {
+  padding-bottom: 1rem;
+}
+
+.auth-cover__logo {
+  width: 12rem;
+  height: 12rem;
+  margin-left: -2rem;
+  background-color: currentcolor;
+  mask-image: url('/icons/cat-sleeping.svg');
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}

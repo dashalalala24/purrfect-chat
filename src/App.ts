@@ -1,18 +1,20 @@
 import Handlebars from 'handlebars';
-import { AuthCover } from './partials/AuthCover';
-import { Avatar } from './partials/Avatar';
-import { Button } from './partials/Button';
-import { IconButton } from './partials/IconButton';
-import { Input } from './partials/Input';
-import * as Pages from './pages';
-import { ChatCard } from './partials/ChatCard';
-import './helpers/handlebarsHelpers.ts';
-import type { TChat, TChatsPageContext } from './types/chats';
-import { chatsMock } from './mocks/chats';
+
+import './helpers/handlebarsHelpers';
+
+import { Avatar } from './components/Avatar';
+import { Button } from './components/Button';
+import { ChatCard } from './components/ChatCard';
+import { IconButton } from './components/IconButton';
+import { Input } from './components/Input';
 import { MAX_CHAT_MESSAGES_COUNT } from './consts';
-import type { TProfile, TProfilePageContext } from './types/profile';
+import { AuthCover } from './layout/AuthCover';
+import { ErrorScreen } from './layout/ErrorScreen';
+import { chatsMock } from './mocks/chats';
 import { profileMock } from './mocks/profile';
-import { ErrorScreen } from './partials/ErrorScreen';
+import * as Pages from './pages';
+import type { TChat, TChatsPageContext } from './types/chats';
+import type { TProfile, TProfilePageContext } from './types/profile';
 
 Handlebars.registerPartial('AuthCover', AuthCover);
 Handlebars.registerPartial('Avatar', Avatar);
@@ -86,7 +88,7 @@ export default class App {
           const lastMessage = chatMock.messages[chatMock.messages.length - 1];
 
           const messagePreview = lastMessage.type === 'outgoing' ? `You: ${lastMessage.text}` : lastMessage.text;
-          console.log('messagePreview', messagePreview);
+
           const unreadMessagesCountLabel =
             chatMock.unreadMessagesCount && chatMock.unreadMessagesCount > MAX_CHAT_MESSAGES_COUNT
               ? `${MAX_CHAT_MESSAGES_COUNT}+`

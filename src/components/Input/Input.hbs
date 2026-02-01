@@ -1,0 +1,20 @@
+<div class='input__container {{class}}'>
+  {{#if label}}
+    <label for='{{id}}' class='input__label'>{{label}}</label>
+   {{/if}}
+   
+  <input
+    id='{{id}}'
+    name='{{name}}'
+    type='{{type}}'
+    placeholder='{{placeholder}}'
+    value='{{value}}'
+    autocomplete='{{#if autocomplete}}{{autocomplete}}{{else}}on{{/if}}'
+    class='input {{#if errorMessage}}input_error{{/if}} {{inputClass}}'
+    {{#if readonly}}readonly{{/if}}
+  />
+
+  {{#unless hideErrorMessage}}
+    <span class='input__error-message'>{{errorMessage}}</span>
+  {{/unless}}
+</div>

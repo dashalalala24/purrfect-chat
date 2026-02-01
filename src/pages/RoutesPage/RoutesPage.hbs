@@ -1,14 +1,20 @@
-{{!-- страница со всеми роутами для удобства навигации на первом спринте, будет удалена после ревью --}}
+{{! страница со всеми роутами для удобства навигации на первом спринте, будет удалена после ревью }}
 
-<div style="height: 100vh; width: 100vw; display: flex; gap: 1rem; flex-direction: column; align-items: center; justify-content: center;">
+<div
+  style='height: 100vh; width: 100vw; display: flex; gap: 1rem; flex-direction: column; align-items: center; justify-content: center;'
+>
   <p>Все страницы:</p>
-  <div style="display: flex; gap: 1rem; align-items: center; justify-content: center; margin: 0.5rem 0 4rem">
-    {{> Button id='route-sign-in' type='button' text='sign in page'}}
-    {{> Button id='route-sign-up' type='button' text='sign up page'}}
-    {{> Button id='route-chats' type='button' text='chats page'}}
-    {{> Button id='route-profile' type='button' text='profile page'}}
-    {{> Button id='route-not-found' type='button' text='404 error page'}}
-    {{> Button id='route-server-error' type='button' text='5xx error page'}}
-  </div>
+
+  <nav>
+    <ul>
+      <li><a href='#' id='signUpPage'>sign up page</a></li>
+      <li><a href='#' id='signInPage'>sign in page</a></li>
+      <li><a href='#' id='chatsPage'>chats page</a></li>
+      <li><a href='#' id='profilePage'>profile page</a></li>
+      <li><a href='#' id='notFoundPage'>404 error page</a></li>
+      <li><a href='#' id='serverErrorPage'>5xx error page</a></li>
+    </ul>
+  </nav>
+
   <p>Для возврата на эту страницу просто нажмите F5</p>
 </div>
