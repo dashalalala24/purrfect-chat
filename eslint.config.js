@@ -40,7 +40,7 @@ export default defineConfig([
       'no-case-declarations': 'off',
       'unused-imports/no-unused-imports': 'warn',
       'linebreak-style': 'off',
-      quotes: ['warn', 'single'],
+      quotes: 'off',
       semi: ['warn', 'always'],
       'object-shorthand': 'warn',
     },
