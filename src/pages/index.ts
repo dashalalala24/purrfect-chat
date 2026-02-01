@@ -1,8 +1,10 @@
-export { ChatsPage } from './ChatsPage';
-export { NotFoundPage } from './NotFoundPage';
-export { ProfilePage } from './ProfilePage';
-export { ServerErrorPage } from './ServerErrorPage';
+export { RoutesPage } from './RoutesPage';
+
 export { SignInPage } from './SignInPage';
 export { SignUpPage } from './SignUpPage';
 
-export { RoutesPage } from './RoutesPage';
+export { ChatsPage } from './ChatsPage';
+export { ProfilePage } from './ProfilePage';
+
+export { NotFoundPage } from './NotFoundPage';
+export { ServerErrorPage } from './ServerErrorPage';

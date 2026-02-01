@@ -1,13 +1,13 @@
 <main class='profile'>
   <div class='profile__header'>
     <div class='profile__header-container'>
-      {{> IconButton id='exit-profile' ariaLabel='Exit profile' class='profile__header-exit-button' iconSrc='/icons/arrow-left.svg' }}
+      {{{ExitButton}}}
       <h1 class='profile__title'>Profile</h1>
       <div class='profile__header-container-empty'></div>
     </div>
     <div class='profile__avatar-upload'>
       <label class='profile__avatar-label' for='upload-profile-avatar' aria-label='Upload avatar'>
-        {{> Avatar src=profile.avatarSrc username=profile.displayName alt=profile.displayName class='profile__avatar'  }}
+        {{{ProfileAvatar}}}
         <span class='profile__avatar-overlay'>
           <span class='profile__avatar-icon'></span>
         </span>
@@ -19,28 +19,28 @@
   <form id='profile-form' class='profile__form'>
     <div class='profile__form-header'>
       <h2 class='profile__form-title'>Personal information</h2>
-      
+
       {{#if isEditMode}}
         <div class='profile__form-buttons'>
-          {{> Button id='reset-profile-form' type='reset' text='Cancel' iconSrc='/icons/cancel.svg' variant='text' class='profile__form-button' }}
-          {{> Button id='submit-profile-form' type='submit' text='Save' iconSrc='/icons/save.svg' class='profile__form-button' }}
+          {{{ResetButton}}}
+          {{{SubmitButton}}}
         </div>
       {{else}}
-        {{> Button id='edit-profile' type='button' text='Edit' iconSrc='/icons/edit.svg' variant='text' class='profile__form-button'  }}
+        {{{ProfileEditModeButton}}}
       {{/if}}
 
     </div>
     <div class='profile__form-inputs'>
-      {{> Input name='first_name' id='profile-first-name' type='text' placeholder='Name' label='First name' value=profile.firstName }}
-      {{> Input name='second_name' id='profile-second-name' type='text' placeholder='Last name' label='Last name' value=profile.lastName }}
-      {{> Input name='display_name' id='profile-display-name' type='text' placeholder='your_display_name' label='Display name' value=profile.displayName }}
-      {{> Input name='email' id='profile-email' type='email' placeholder='your@email.com' label='Email' value=profile.email }}
-      {{> Input name='oldPassword' id='profile-old-password' type='password' placeholder='password'label='Old password'}}
-      {{> Input name='newPassword' id='profile-new-password' type='password' placeholder='password' label='New password'}}
+      {{{FirstNameInput}}}
+      {{{SecondNameInput}}}
+      {{{DisplayNameInput}}}
+      {{{EmailInput}}}
+      {{{OldPasswordInput}}}
+      {{{NewPasswordInput}}}
     </div>
 
     <div class='profile__form-footer'>
-      {{> Button id='sign-out' type='button' text='Sign out' iconSrc='/icons/exit.svg' variant='text' class='profile__form-button profile__form-exit-button' fullwidth=true }}
+      {{{SignOutButton}}}
     </div>
   </form>
 </main>

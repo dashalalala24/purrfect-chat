@@ -1,0 +1,70 @@
+@keyframes error-screen-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-1rem);
+  }
+}
+
+.error-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+  padding-top: 4rem;
+  box-sizing: border-box;
+}
+
+.error-screen__image {
+  position: relative;
+  width: 12rem;
+  height: 12rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-screen__image-main {
+  width: 100%;
+  height: 100%;
+  color: #422429;
+  background-color: currentcolor;
+  mask-image: var(--error-image);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+.error-screen__animation {
+  --error-animation-image: url('/icons/question-mark.svg');
+
+  position: absolute;
+  width: 6rem;
+  height: 6rem;
+  top: -0.5rem;
+  right: -2rem;
+  color: #f03b82;
+  background-color: currentcolor;
+  mask-image: var(--error-animation-image);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  animation: error-screen-float 2s ease-in-out infinite;
+}
+
+.error-screen__error-code {
+  color: transparent;
+  background: linear-gradient(to right, var(--pink), var(--orange));
+  background-clip: text;
+}
+
+.error-screen__subtitle {
+  margin-bottom: 1.5rem;
+  max-width: 30rem;
+  color: var(--muted-foreground);
+}
