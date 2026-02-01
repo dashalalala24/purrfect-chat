@@ -1,1 +1,27 @@
-{{> SignUpModule}}
+<main class='auth'>
+  {{{AuthCover}}}
+
+  <div class='auth__form-cover'>
+    <div class='auth__form-container'>
+      <h2 class='auth__form-title'>Create account</h2>
+
+      <p class='auth__form-subtitle'>Join the cutest chat community</p>
+
+      <form id='sign-up-form' class='auth__form'>
+        {{{FirstNameInput}}}
+        {{{SecondNameInput}}}
+        {{{EmailInput}}}
+        {{{PhoneInput}}}
+        {{{LoginInput}}}
+        {{{PasswordInput}}}
+        {{{ConfirmPasswordInput}}}
+
+        {{{SubmitButton}}}
+      </form>
+
+      <p class='auth__form-subtext'>Already have an account?
+        {{{SignInLink}}}
+      </p>
+    </div>
+  </div>
+</main>

@@ -181,11 +181,6 @@ export default class ProfilePage extends Block {
 
       SignOutButton,
     };
-
-    // this.setProps({
-    //   profile,
-    //   isEditMode,
-    // });
   }
 
   validateAll() {
