@@ -1,11 +1,12 @@
 export type TProfile = {
-  id: string;
-  displayName: string;
-  firstName: string;
-  lastName: string;
+  id: number;
+  display_name: string | null;
+  first_name: string;
+  second_name: string;
+  login: string;
   email: string;
   phone: string;
-  avatarSrc: string | null;
+  avatar: string | null;
 };
 
 export type TProfilePageContext = {

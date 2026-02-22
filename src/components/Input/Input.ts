@@ -4,7 +4,7 @@ import Block from '../../services/Block';
 type TInputProps = {
   id?: string;
   name?: string;
-  value?: string;
+  value?: string | null;
   type?: string;
   placeholder?: string;
   label?: string;
@@ -19,6 +19,7 @@ type TInputProps = {
 
   onChange?: TInputEventHandler;
   onBlur?: TInputEventHandler;
+  onKeyDown?: TInputEventHandler;
 };
 
 type TInputEventHandler = (event: Event) => void;
@@ -31,7 +32,7 @@ class Input extends Block {
   }
 
   _addEvents() {
-    const { onChange, onBlur } = this.props as TInputProps;
+    const { onChange, onBlur, onKeyDown } = this.props as TInputProps;
     const inputElement = this.element?.querySelector('input');
 
     if (!inputElement) {
@@ -45,10 +46,14 @@ class Input extends Block {
     if (onBlur) {
       inputElement.addEventListener('blur', onBlur);
     }
+
+    if (onKeyDown) {
+      inputElement.addEventListener('keydown', onKeyDown);
+    }
   }
 
   _removeEvents() {
-    const { onChange, onBlur } = this.props as TInputProps;
+    const { onChange, onBlur, onKeyDown } = this.props as TInputProps;
     const inputElement = this.element?.querySelector('input');
 
     if (!inputElement) {
@@ -61,6 +66,10 @@ class Input extends Block {
 
     if (onBlur) {
       inputElement.removeEventListener('blur', onBlur);
+    }
+
+    if (onKeyDown) {
+      inputElement.removeEventListener('keydown', onKeyDown);
     }
   }
 

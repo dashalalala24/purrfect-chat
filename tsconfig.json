@@ -20,8 +20,9 @@
     "noUnusedParameters": true,
     "sourceMap": true,
     "strictNullChecks": true,
+    "useUnknownInCatchVariables": false,
     "jsx": "react-jsx",
     "types": ["vite/client"]
   },
-  "include": ["src"]
+  "include": ["src", "src/window.d.ts"]
 }

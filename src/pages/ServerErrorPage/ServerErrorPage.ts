@@ -1,8 +1,8 @@
 import serverErrorPageTemplate from './ServerErrorPage.hbs?raw';
 import { Button } from '../../components/Button';
+import { Routes } from '../../consts/routes';
 import { ErrorScreen } from '../../layout/ErrorScreen';
 import Block from '../../services/Block';
-import navigate from '../../utils/navigate';
 
 export default class ServerErrorPage extends Block {
   constructor(props: object = {}) {
@@ -34,7 +34,7 @@ export default class ServerErrorPage extends Block {
       class: 'server-error__button',
       iconSrc: '/icons/home.svg',
       variant: 'outlined',
-      onClick: () => navigate('chatsPage'),
+      onClick: () => window.router.go(Routes.Chats),
     });
 
     this.children = {

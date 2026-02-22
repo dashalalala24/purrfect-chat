@@ -1,0 +1,40 @@
+<div class='chat-action-popup {{#unless isOpen}}chat-action-popup_hidden{{/unless}}'>
+  <div class='chat-action-popup__overlay'></div>
+  <div class='chat-action-popup__content'>
+    <h3 class='chat-action-popup__title'>{{title}}</h3>
+
+    {{#if requiresUserSelection}}
+      {{#if showSearch}}
+        <div class='chat-action-popup__search-row'>
+          {{{LoginInput}}}
+          {{{SearchButton}}}
+        </div>
+      {{/if}}
+
+      <div class='chat-action-popup__results'>
+        {{#if userResultButtons.length}}
+          {{#each userResultButtons}}
+            {{{this}}}
+          {{/each}}
+        {{else if hasSearched}}
+          <p class='chat-action-popup__empty'>No users found</p>
+        {{/if}}
+      </div>
+    {{else if requiresAvatarUpload}}
+      <div class='chat-action-popup__upload'>
+        <label class='chat-action-popup__upload-label' for='chat-action-avatar-file'>Choose image</label>
+        <input id='chat-action-avatar-file' type='file' class='chat-action-popup__upload-input' accept='image/*' />
+        {{#if uploadError}}
+          <p class='chat-action-popup__error'>{{uploadError}}</p>
+        {{/if}}
+      </div>
+    {{else if description}}
+      <p class='chat-action-popup__description'>{{description}}</p>
+    {{/if}}
+
+    <div class='chat-action-popup__actions'>
+      {{{CancelButton}}}
+      {{{SubmitButton}}}
+    </div>
+  </div>
+</div>

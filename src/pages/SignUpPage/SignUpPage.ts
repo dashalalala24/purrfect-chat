@@ -2,10 +2,11 @@ import signUpPageTemplate from './SignUpPage.hbs?raw';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Link } from '../../components/Link';
+import { Routes } from '../../consts/routes';
+import AuthController from '../../controllers/AuthController';
 import { AuthCover } from '../../layout/AuthCover';
 import Block from '../../services/Block';
 import getInputValue from '../../utils/getInputValue';
-import navigate from '../../utils/navigate';
 import validateConfirmPassword from '../../utils/validation/validateConfirmPassword';
 import validateEmail from '../../utils/validation/validateEmail';
 import validateFirstName from '../../utils/validation/validateFirstName';
@@ -105,6 +106,7 @@ export default class SignUpPage extends Block {
     const SignInLink = new Link({
       text: 'Sign in',
       id: 'signInPage',
+      href: Routes.SignIn,
     });
 
     this.children = {
@@ -149,19 +151,17 @@ export default class SignUpPage extends Block {
       const phone = getInputValue(this.children.PhoneInput);
       const login = getInputValue(this.children.LoginInput);
       const password = getInputValue(this.children.PasswordInput);
-      const confirmPassword = getInputValue(this.children.ConfirmPasswordInput);
 
-      console.log({
-        firstName,
-        secondName,
+      const userData: Record<string, unknown> = {
+        first_name: firstName,
+        second_name: secondName,
         email,
         phone,
         login,
         password,
-        confirmPassword,
-      });
+      };
 
-      navigate('signInPage');
+      AuthController.signUp(userData);
     }
   }
 

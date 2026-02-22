@@ -3,40 +3,45 @@ import { nanoid } from 'nanoid';
 
 import EventBus from './EventBus';
 
-type TProps = Record<string, unknown>;
-
 type TEvents = Record<string, (e: Event) => void>;
 
-export type TComponentProps = TProps & {
+type TComponentProps<P extends Record<string, any>> = P & {
   events?: TEvents;
   hasID?: boolean;
 };
 
-export type TBlockProps = TProps & {
+type TBlockProps<P extends Record<string, any>> = P & {
   events?: TEvents;
 };
 
-export default class Block {
+type TBlockEventMap<P extends Record<string, any>> = {
+  init: () => void;
+  'flow:component-did-mount': () => void;
+  'flow:component-did-update': (oldProps: TBlockProps<P>, newProps: TBlockProps<P>) => void;
+  'flow:render': () => void;
+};
+
+abstract class Block<Props extends Record<string, any> = Record<string, unknown>> {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
     FLOW_CDU: 'flow:component-did-update',
     FLOW_RENDER: 'flow:render',
-  };
+  } as const;
 
   private _element: HTMLElement | null = null;
   private _meta: { tagName: string } | null = null;
   public _id: string = nanoid(6);
-  private _eventBus: () => EventBus;
-  public props: TComponentProps;
-  public children: Record<string, Block>;
+  private _eventBus: () => EventBus<TBlockEventMap<Props>>;
+  public props: TComponentProps<Props>;
+  public children: Record<string, Block<any>>;
 
   constructor(propsWithChildren: object) {
-    const eventBus = new EventBus();
+    const eventBus = new EventBus<TBlockEventMap<Props>>();
 
     const { props, children } = this._getPropsAndChildren(propsWithChildren);
     this.props = this._makePropsProxy({ ...props });
-    this.children = children as Record<string, Block>;
+    this.children = children as Record<string, Block<any>>;
 
     this._eventBus = () => eventBus;
 
@@ -61,7 +66,7 @@ export default class Block {
     });
   }
 
-  _registerEvents(eventBus: EventBus) {
+  _registerEvents(eventBus: EventBus<TBlockEventMap<Props>>) {
     eventBus.on(Block.EVENTS.INIT, this._init.bind(this));
     eventBus.on(Block.EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
     eventBus.on(Block.EVENTS.FLOW_CDU, this._componentDidUpdate.bind(this));
@@ -93,15 +98,13 @@ export default class Block {
     });
   }
 
-  componentDidMount(oldProps?: TBlockProps) {
-    console.log(`CDM! oldProps: ${oldProps}`);
-  }
+  componentDidMount(_oldProps?: TBlockProps<Props>) {}
 
   dispatchComponentDidMount() {
     this._eventBus().emit(Block.EVENTS.FLOW_CDM);
   }
 
-  _componentDidUpdate(oldProps: TBlockProps, newProps: TBlockProps) {
+  _componentDidUpdate(oldProps: TBlockProps<Props>, newProps: TBlockProps<Props>) {
     const response = this.componentDidUpdate(oldProps, newProps);
     if (!response) {
       return;
@@ -109,15 +112,13 @@ export default class Block {
     this._render();
   }
 
-  componentDidUpdate(oldProps?: TBlockProps, newProps?: TBlockProps) {
-    console.log(`CDU! old: ${oldProps}, new:${newProps}`);
-
+  componentDidUpdate(_oldProps?: TBlockProps<Props>, _newProps?: TBlockProps<Props>) {
     return true;
   }
 
   _getPropsAndChildren(propsAndChildren: object) {
-    const children: Record<string, Block> = {};
-    const props: TComponentProps = {};
+    const children: Record<string, Block<any>> = {};
+    const props: Record<string, unknown> = {};
 
     Object.entries(propsAndChildren).forEach(([key, value]) => {
       if (value instanceof Block) {
@@ -127,10 +128,10 @@ export default class Block {
       }
     });
 
-    return { children, props };
+    return { children, props: props as TComponentProps<Props> };
   }
 
-  setProps = (nextProps: TBlockProps) => {
+  setProps = (nextProps: TBlockProps<Props>) => {
     if (!nextProps) {
       return;
     }
@@ -143,7 +144,7 @@ export default class Block {
   }
 
   _render() {
-    const propsAndStubs = { ...this.props };
+    const propsAndStubs: Record<string, unknown> = { ...this.props };
 
     Object.entries(this.children).forEach(([key, child]) => {
       propsAndStubs[key] = `<div data-id="${child._id}"></div>`;
@@ -164,7 +165,18 @@ export default class Block {
     });
 
     if (this._element) {
-      this._element.replaceWith(newElement);
+      const currentElement = this._element;
+      const currentElementParent = currentElement.parentNode;
+
+      if (currentElementParent) {
+        try {
+          currentElementParent.replaceChild(newElement, currentElement);
+        } catch (error) {
+          if (!(error instanceof DOMException) || error.name !== 'NotFoundError') {
+            throw error;
+          }
+        }
+      }
     }
 
     this._element = newElement as HTMLElement;
@@ -180,7 +192,7 @@ export default class Block {
     return this.element as HTMLElement;
   }
 
-  _makePropsProxy(props: TComponentProps) {
+  _makePropsProxy(props: TComponentProps<Props>) {
     const self = this;
 
     return new Proxy(props, {
@@ -217,3 +229,7 @@ export default class Block {
     this.getContent().style.display = 'none';
   }
 }
+
+export type TBlockConstructor = new (propsWithChildren: any) => Block;
+
+export default Block;

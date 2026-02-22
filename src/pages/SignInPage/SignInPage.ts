@@ -2,11 +2,13 @@ import signInPageTemplate from './SignInPage.hbs?raw';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Link } from '../../components/Link';
+import { Routes } from '../../consts/routes';
+import AuthController from '../../controllers/AuthController';
+import ChatController from '../../controllers/ChatController';
 import { AuthCover } from '../../layout/AuthCover';
 import Block from '../../services/Block';
 import getInputValue from '../../utils/getInputValue';
-import navigate from '../../utils/navigate';
-import validateEmail from '../../utils/validation/validateEmail';
+import validateLogin from '../../utils/validation/validateLogin';
 import validatePassword from '../../utils/validation/validatePassword';
 
 export default class SignInPage extends Block {
@@ -18,17 +20,17 @@ export default class SignInPage extends Block {
   }
 
   init() {
-    const validateEmailBind = validateEmail.bind(this);
+    const loginValidationBind = validateLogin.bind(this);
     const validatePasswordBind = validatePassword.bind(this);
     const onSignInBind = this.onSignIn.bind(this);
 
-    const EmailInput = new Input({
-      id: 'sign-in-email',
-      label: 'Email',
-      type: 'email',
-      name: 'email',
-      placeholder: 'your@email.com',
-      onBlur: validateEmailBind,
+    const LoginInput = new Input({
+      id: 'sign-up-login',
+      label: 'Login',
+      type: 'text',
+      name: 'login',
+      placeholder: 'your_login',
+      onBlur: loginValidationBind,
     });
 
     const PasswordInput = new Input({
@@ -50,41 +52,46 @@ export default class SignInPage extends Block {
     const SignUpLink = new Link({
       text: 'Sign up',
       id: 'signUpPage',
+      href: Routes.SignUp,
     });
 
     this.children = {
       ...this.children,
-      EmailInput,
+      LoginInput,
       PasswordInput,
       SubmitButton,
       SignUpLink,
     };
   }
 
-  onSignIn(e: Event) {
+  async onSignIn(e: Event) {
     e.preventDefault();
 
     this.validateAll();
 
-    const emailError = !!this.children.EmailInput.props.errorMessage;
+    const loginError = !!this.children.LoginInput.props.errorMessage;
     const passwordError = !!this.children.PasswordInput.props.errorMessage;
 
-    if (!emailError && !passwordError) {
-      const email = getInputValue(this.children.EmailInput);
+    if (!loginError && !passwordError) {
+      const login = getInputValue(this.children.LoginInput);
       const password = getInputValue(this.children.PasswordInput);
 
-      console.log({
-        email,
+      const userData: Record<string, unknown> = {
+        login,
         password,
-      });
+      };
 
-      navigate('chatsPage');
+      const isSignedIn = await AuthController.signIn(userData);
+
+      if (isSignedIn) {
+        await ChatController.getChats();
+      }
     }
   }
 
   validateAll() {
     const validations = [
-      { key: 'EmailInput', fn: validateEmail },
+      { key: 'LoginInput', fn: validateLogin },
       { key: 'PasswordInput', fn: validatePassword },
     ];
 

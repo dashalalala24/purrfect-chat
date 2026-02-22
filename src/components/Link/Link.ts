@@ -4,6 +4,7 @@ import Block from '../../services/Block';
 type TLinkProps = {
   id?: string;
   text?: string;
+  href?: string;
 };
 
 class Link extends Block {

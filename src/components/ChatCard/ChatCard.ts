@@ -3,7 +3,7 @@ import Block from '../../services/Block';
 import { Avatar } from '../Avatar';
 
 type TChatCardProps = {
-  id?: string;
+  id?: number;
   selected?: boolean;
 
   avatarSrc?: string;

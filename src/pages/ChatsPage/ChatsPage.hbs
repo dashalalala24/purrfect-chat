@@ -38,15 +38,18 @@
       <div class='chats__header chats__chat-header'>
         <div class='chats__chat-header-user'>
           {{{SelectedChatAvatar}}}
-          <h2 class='chats__chat-username'>{{selectedChat.user.username}}</h2>
+          <h2 class='chats__chat-username'>{{selectedChatDisplayName}}</h2>
         </div>
 
-         {{{ChatSettingsButton}}}
+        <div class='chats__chat-settings'>
+          {{{ChatSettingsButton}}}
+          {{{ChatSettingsMenu}}}
+        </div>
       </div>
 
       <div class='chats__chat-messages'>
         <p class='chats__chat-messages_date'>Today<p>
-        {{#each selectedChat.messages}}
+        {{#each chatMessages}}
           <div class='chats__message chats__message_{{type}}'>
             <p class='chats__message-text'>{{text}}</p>
             <span class='chats__message-time'>{{dateTime}}</span>
@@ -66,5 +69,6 @@
       <p class='chats_chat-empty-text'>Pick a conversation from the list or start a new one to connect with friends!</p>
     </div>
   {{/if}}
-  
+
+  {{{ChatActionPopup}}}
 </main>
