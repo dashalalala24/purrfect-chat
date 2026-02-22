@@ -1,7 +1,7 @@
 import toastTemplate from './Toast.hbs?raw';
 import Block from '../../services/Block';
 
-type TToastVariant = 'error' | 'success' | 'info';
+export type TToastVariant = 'error' | 'success' | 'info';
 
 type TToastProps = {
   message: string;

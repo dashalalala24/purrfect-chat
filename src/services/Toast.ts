@@ -1,4 +1,4 @@
-import { Toast, type TToastType } from '../components/Toast';
+import { Toast, type TToastVariant } from '../components/Toast';
 
 type ToastOptions = {
   duration?: number;
@@ -32,7 +32,7 @@ class ToastService {
     this.show(message, 'info', options);
   }
 
-  private show(message: string, variant: TToastType, options?: ToastOptions) {
+  private show(message: string, variant: TToastVariant, options?: ToastOptions) {
     this.init();
 
     if (!this.container) {

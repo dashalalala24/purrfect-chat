@@ -1,7 +1,7 @@
 import { UserApi } from '../api/userApi';
 import handleControllerError from '../services/handleControllerError';
 import store from '../services/Store';
-import type { User } from '../services/Store';
+import type { TUser } from '../services/Store';
 import toast from '../services/Toast';
 
 class UserController {
@@ -21,12 +21,12 @@ class UserController {
     }
   }
 
-  public static async updateProfile(data: Record<string, unknown>): Promise<User | null> {
+  public static async updateProfile(data: Record<string, unknown>): Promise<TUser | null> {
     try {
       const xhr = await UserApi.updateProfile(data);
 
       if (xhr.status === 200) {
-        const userData = JSON.parse(xhr.responseText) as User;
+        const userData = JSON.parse(xhr.responseText) as TUser;
 
         store.setUser(userData);
 
@@ -41,12 +41,12 @@ class UserController {
     }
   }
 
-  public static async updateProfileAvatar(data: FormData): Promise<User | null> {
+  public static async updateProfileAvatar(data: FormData): Promise<TUser | null> {
     try {
       const xhr = await UserApi.updateProfileAvatar(data);
 
       if (xhr.status === 200) {
-        const userData = JSON.parse(xhr.responseText) as User;
+        const userData = JSON.parse(xhr.responseText) as TUser;
 
         store.setUser(userData);
 

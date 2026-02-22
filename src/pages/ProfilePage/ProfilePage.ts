@@ -1,5 +1,5 @@
 import profilePageTemplate from './ProfilePage.hbs?raw';
-import { baseUrl } from '../../api/baseUrl';
+import { baseUrl } from '../../api/baseURL';
 import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/Button';
 import { IconButton } from '../../components/IconButton';
@@ -307,8 +307,9 @@ export default class ProfilePage extends Block<TProfilePageProps> {
       ...profile,
       ...updatedUser,
       id: typeof updatedUser.id === 'number' ? updatedUser.id : profile?.id,
-      display_name: typeof updatedUser.display_name === 'string' ? updatedUser.display_name : profile?.display_name,
-      avatar: typeof updatedUser.avatar === 'string' ? updatedUser.avatar : profile?.avatar,
+      display_name:
+        typeof updatedUser.display_name === 'string' ? updatedUser.display_name : profile?.display_name || undefined,
+      avatar: typeof updatedUser.avatar === 'string' ? updatedUser.avatar : profile?.avatar || undefined,
     };
 
     this.setProps({ profile: nextProfile });

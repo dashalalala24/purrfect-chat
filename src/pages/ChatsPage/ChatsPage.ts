@@ -1,5 +1,5 @@
 import chatsPageTemplate from './ChatsPage.hbs?raw';
-import { baseUrl } from '../../api/baseUrl';
+import { baseUrl } from '../../api/baseURL';
 import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/Button';
 import { ChatActionPopup } from '../../components/ChatActionPopup';

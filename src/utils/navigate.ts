@@ -1,8 +1,5 @@
 import Handlebars from 'handlebars';
 
-import { chatsMock } from '../mocks/chats';
-import { profileMock } from '../mocks/profile';
-
 type PageComponent = new (props: any) => {
   getContent: () => HTMLElement;
 };
@@ -14,11 +11,11 @@ const pages: { [key: string]: { loader: PageLoader; context: object } } = {
   signUpPage: { loader: () => import('../pages/SignUpPage').then((m) => m.SignUpPage), context: {} },
   chatsPage: {
     loader: () => import('../pages/ChatsPage').then((m) => m.ChatsPage),
-    context: { chats: chatsMock, selectedChat: null },
+    context: { chats: {}, selectedChat: null },
   },
   profilePage: {
     loader: () => import('../pages/ProfilePage').then((m) => m.ProfilePage),
-    context: { profile: profileMock, isEditMode: false },
+    context: { profile: {}, isEditMode: false },
   },
   notFoundPage: { loader: () => import('../pages/NotFoundPage').then((m) => m.NotFoundPage), context: {} },
   serverErrorPage: {

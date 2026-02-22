@@ -1,6 +1,6 @@
 import store from './Store';
 import toast from './Toast';
-import { baseWsUrl } from '../api/baseUrl';
+import { baseWsUrl } from '../api/baseURL';
 
 class WebSocketService {
   private static instance: WebSocketService | null = null;

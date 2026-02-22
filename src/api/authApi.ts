@@ -1,4 +1,4 @@
-import { baseUrl } from './baseUrl';
+import { baseUrl } from './baseURL';
 import HTTPTransport from '../httpTransport/httpTransport';
 
 const base = baseUrl;
