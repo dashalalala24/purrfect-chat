@@ -1,4 +1,5 @@
 import toast from './Toast';
+import { HttpStatus } from '../consts/httpStatus';
 import { Routes } from '../consts/routes';
 
 type ErrorMessages = {
@@ -43,14 +44,14 @@ const handleControllerError = (error: unknown, defaultMessage: string, messages:
   console.error(defaultMessage, error.statusText);
 
   switch (error.status) {
-    case 400:
+    case HttpStatus.BadRequest:
       toast.error(errorReason ?? mergedMessages.badRequest);
       break;
-    case 401:
+    case HttpStatus.Unauthorized:
       toast.error(errorReason ?? mergedMessages.unauthorized);
       window.router.go(Routes.SignIn);
       break;
-    case 500:
+    case HttpStatus.InternalServerError:
       window.router.go(Routes.ServerError);
       break;
     default:

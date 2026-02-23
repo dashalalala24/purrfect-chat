@@ -77,6 +77,16 @@ class Store extends EventBus<StoreEventMap> {
     this.set({ messages: [] });
   }
 
+  public clearAuthData() {
+    this.set({
+      user: undefined,
+      chats: undefined,
+      token: undefined,
+      messages: undefined,
+      activeChat: undefined,
+    });
+  }
+
   public setToken(token: string) {
     this.set({ token });
   }

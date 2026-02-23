@@ -1,4 +1,5 @@
 import { UserApi } from '../api/userApi';
+import { HttpStatus } from '../consts/httpStatus';
 import handleControllerError from '../services/handleControllerError';
 import store from '../services/Store';
 import type { TUser } from '../services/Store';
@@ -9,7 +10,7 @@ class UserController {
     try {
       const xhr = await UserApi.updatePassword(data);
 
-      if (xhr.status === 200) {
+      if (xhr.status === HttpStatus.Ok) {
         toast.success('Password updated successfully');
         return true;
       } else {
@@ -25,7 +26,7 @@ class UserController {
     try {
       const xhr = await UserApi.updateProfile(data);
 
-      if (xhr.status === 200) {
+      if (xhr.status === HttpStatus.Ok) {
         const userData = JSON.parse(xhr.responseText) as TUser;
 
         store.setUser(userData);
@@ -45,7 +46,7 @@ class UserController {
     try {
       const xhr = await UserApi.updateProfileAvatar(data);
 
-      if (xhr.status === 200) {
+      if (xhr.status === HttpStatus.Ok) {
         const userData = JSON.parse(xhr.responseText) as TUser;
 
         store.setUser(userData);

@@ -8,7 +8,7 @@ export type TChatMessageType = 'incoming' | 'outgoing';
 export type TChatMessage = {
   dateTime: string;
   text: string;
-  attachments: any[];
+  attachments: unknown[];
   type: TChatMessageType;
 };
 

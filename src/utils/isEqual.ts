@@ -1,4 +1,4 @@
-function isEqual(a: any, b: any): boolean {
+function isEqual(a: unknown, b: unknown): boolean {
   if (a === b) {
     return true;
   }
@@ -7,8 +7,10 @@ function isEqual(a: any, b: any): boolean {
     return false;
   }
 
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
+  const objectA = a as Record<string, unknown>;
+  const objectB = b as Record<string, unknown>;
+  const keysA = Object.keys(objectA);
+  const keysB = Object.keys(objectB);
 
   if (keysA.length !== keysB.length) {
     return false;
@@ -19,8 +21,8 @@ function isEqual(a: any, b: any): boolean {
       return false;
     }
 
-    const valueA = (a as any)[key];
-    const valueB = (b as any)[key];
+    const valueA = objectA[key];
+    const valueB = objectB[key];
 
     if (typeof valueA === 'object' && typeof valueB === 'object') {
       if (!isEqual(valueA, valueB)) {

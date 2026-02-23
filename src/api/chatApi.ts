@@ -2,42 +2,45 @@ import { baseUrl } from './baseURL';
 import HTTPTransport from '../httpTransport/httpTransport';
 
 const base = baseUrl;
-const chatApiInstance = new HTTPTransport();
 
-export class ChatApi {
-  static createNewChat(data: Record<string, unknown>) {
-    return chatApiInstance.post(`${base}/chats`, { data });
+export class ChatApiClient {
+  constructor(private readonly http: HTTPTransport = new HTTPTransport()) {}
+
+  createNewChat(data: Record<string, unknown>) {
+    return this.http.post(`${base}/chats`, { data });
   }
 
-  static getAllChats() {
-    return chatApiInstance.get(`${base}/chats`);
+  getAllChats() {
+    return this.http.get(`${base}/chats`);
   }
 
-  static getChatUsers(chatId: number) {
-    return chatApiInstance.get(`${base}/chats/${chatId}/users`);
+  getChatUsers(chatId: number) {
+    return this.http.get(`${base}/chats/${chatId}/users`);
   }
 
-  static getUserByLogin(data: Record<string, unknown>) {
-    return chatApiInstance.post(`${base}/user/search`, { data });
+  getUserByLogin(data: Record<string, unknown>) {
+    return this.http.post(`${base}/user/search`, { data });
   }
 
-  static addUserToChat(data: Record<string, unknown>) {
-    return chatApiInstance.put(`${base}/chats/users`, { data });
+  addUserToChat(data: Record<string, unknown>) {
+    return this.http.put(`${base}/chats/users`, { data });
   }
 
-  static deleteUserFromChat(data: Record<string, unknown>) {
-    return chatApiInstance.delete(`${base}/chats/users`, { data });
+  deleteUserFromChat(data: Record<string, unknown>) {
+    return this.http.delete(`${base}/chats/users`, { data });
   }
 
-  static deleteChat(data: Record<string, unknown>) {
-    return chatApiInstance.delete(`${base}/chats`, { data });
+  deleteChat(data: Record<string, unknown>) {
+    return this.http.delete(`${base}/chats`, { data });
   }
 
-  static updateChatAvatar(data: FormData) {
-    return chatApiInstance.put(`${base}/chats/avatar`, { data });
+  updateChatAvatar(data: FormData) {
+    return this.http.put(`${base}/chats/avatar`, { data });
   }
 
-  static getChatToken(id: number) {
-    return chatApiInstance.post(`${base}/chats/token/${id}`);
+  getChatToken(id: number) {
+    return this.http.post(`${base}/chats/token/${id}`);
   }
 }
+
+export const ChatApi = new ChatApiClient();

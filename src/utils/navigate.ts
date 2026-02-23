@@ -1,12 +1,14 @@
 import Handlebars from 'handlebars';
 
-type PageComponent = new (props: any) => {
+type TPageContext = Record<string, unknown>;
+
+type PageComponent = new (props: TPageContext) => {
   getContent: () => HTMLElement;
 };
 
 type PageLoader = () => Promise<PageComponent | string>;
 
-const pages: { [key: string]: { loader: PageLoader; context: object } } = {
+const pages: { [key: string]: { loader: PageLoader; context: TPageContext } } = {
   signInPage: { loader: () => import('../pages/SignInPage').then((m) => m.SignInPage), context: {} },
   signUpPage: { loader: () => import('../pages/SignUpPage').then((m) => m.SignUpPage), context: {} },
   chatsPage: {

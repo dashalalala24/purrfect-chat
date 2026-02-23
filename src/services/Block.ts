@@ -5,23 +5,25 @@ import EventBus from './EventBus';
 
 type TEvents = Record<string, (e: Event) => void>;
 
-type TComponentProps<P extends Record<string, any>> = P & {
+type TComponentProps<P extends Record<string, unknown>> = P & {
   events?: TEvents;
   hasID?: boolean;
 };
 
-type TBlockProps<P extends Record<string, any>> = P & {
+type TBlockProps<P extends Record<string, unknown>> = P & {
   events?: TEvents;
 };
 
-type TBlockEventMap<P extends Record<string, any>> = {
+type TBlockEventMap<P extends Record<string, unknown>> = {
   init: () => void;
   'flow:component-did-mount': () => void;
   'flow:component-did-update': (oldProps: TBlockProps<P>, newProps: TBlockProps<P>) => void;
   'flow:render': () => void;
 };
 
-abstract class Block<Props extends Record<string, any> = Record<string, unknown>> {
+type TAnyBlock = Block<Record<string, unknown>>;
+
+abstract class Block<Props extends Record<string, unknown> = Record<string, unknown>> {
   static EVENTS = {
     INIT: 'init',
     FLOW_CDM: 'flow:component-did-mount',
@@ -34,14 +36,14 @@ abstract class Block<Props extends Record<string, any> = Record<string, unknown>
   public _id: string = nanoid(6);
   private _eventBus: () => EventBus<TBlockEventMap<Props>>;
   public props: TComponentProps<Props>;
-  public children: Record<string, Block<any>>;
+  public children: Record<string, TAnyBlock>;
 
   constructor(propsWithChildren: object) {
     const eventBus = new EventBus<TBlockEventMap<Props>>();
 
     const { props, children } = this._getPropsAndChildren(propsWithChildren);
     this.props = this._makePropsProxy({ ...props });
-    this.children = children as Record<string, Block<any>>;
+    this.children = children;
 
     this._eventBus = () => eventBus;
 
@@ -117,10 +119,10 @@ abstract class Block<Props extends Record<string, any> = Record<string, unknown>
   }
 
   _getPropsAndChildren(propsAndChildren: object) {
-    const children: Record<string, Block<any>> = {};
+    const children: Record<string, TAnyBlock> = {};
     const props: Record<string, unknown> = {};
 
-    Object.entries(propsAndChildren).forEach(([key, value]) => {
+    Object.entries(propsAndChildren as Record<string, unknown>).forEach(([key, value]) => {
       if (value instanceof Block) {
         children[key] = value;
       } else {
@@ -230,6 +232,8 @@ abstract class Block<Props extends Record<string, any> = Record<string, unknown>
   }
 }
 
-export type TBlockConstructor = new (propsWithChildren: any) => Block;
+export type TBlockConstructor = new (
+  propsWithChildren: object,
+) => Block<Record<string, unknown>>;
 
 export default Block;

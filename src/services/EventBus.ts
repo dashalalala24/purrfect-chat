@@ -1,4 +1,4 @@
-type TEventMap = Record<string, (...args: any[]) => void>;
+type TEventMap = Record<string, (...args: never[]) => void>;
 
 class EventBus<Events extends TEventMap> {
   listeners: { [K in keyof Events]?: Events[K][] } = {};

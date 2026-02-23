@@ -1,4 +1,5 @@
 import { ChatApi } from '../api/chatApi';
+import { HttpStatus } from '../consts/httpStatus';
 import handleControllerError from '../services/handleControllerError';
 import store from '../services/Store';
 import toast from '../services/Toast';
@@ -38,7 +39,7 @@ class ChatController {
     try {
       const xhr = await ChatApi.getUserByLogin({ login });
 
-      if (xhr.status !== 200) {
+      if (xhr.status !== HttpStatus.Ok) {
         throw xhr;
       }
 
@@ -60,7 +61,7 @@ class ChatController {
     try {
       const xhr = await ChatApi.createNewChat(data);
 
-      if (xhr.status === 200) {
+      if (xhr.status === HttpStatus.Ok) {
         toast.success('New chat created successfully');
         await this.getChats();
       } else {
@@ -76,7 +77,7 @@ class ChatController {
       const activeChatId = this.getActiveChatId();
       const xhr = await ChatApi.getAllChats();
 
-      if (xhr.status !== 200) {
+      if (xhr.status !== HttpStatus.Ok) {
         throw xhr;
       }
 
@@ -122,7 +123,7 @@ class ChatController {
       if (userId === null) {
         const xhr = await ChatApi.getUserByLogin(data);
 
-        if (xhr.status !== 200) {
+        if (xhr.status !== HttpStatus.Ok) {
           throw xhr;
         }
 
@@ -154,7 +155,7 @@ class ChatController {
       if (userId === null) {
         const xhr = await ChatApi.getUserByLogin(data);
 
-        if (xhr.status !== 200) {
+        if (xhr.status !== HttpStatus.Ok) {
           throw xhr;
         }
 
@@ -167,7 +168,7 @@ class ChatController {
 
       if (chatId !== null && userId !== null) {
         const xhr = await ChatApi.deleteUserFromChat({ users: [userId], chatId });
-        if (xhr.status !== 200) {
+        if (xhr.status !== HttpStatus.Ok) {
           throw xhr;
         }
 
@@ -193,7 +194,7 @@ class ChatController {
 
       const xhr = await ChatApi.deleteChat({ chatId });
 
-      if (xhr.status !== 200) {
+      if (xhr.status !== HttpStatus.Ok) {
         throw xhr;
       }
 
@@ -217,7 +218,7 @@ class ChatController {
       formData.append('chatId', String(chatId));
 
       const xhr = await ChatApi.updateChatAvatar(formData);
-      if (xhr.status !== 200) {
+      if (xhr.status !== HttpStatus.Ok) {
         throw xhr;
       }
 
@@ -233,7 +234,7 @@ class ChatController {
   public static async getToken(id: number): Promise<string | null> {
     try {
       const xhr = await ChatApi.getChatToken(id);
-      if (xhr.status === 200) {
+      if (xhr.status === HttpStatus.Ok) {
         const tokenResponse = JSON.parse(xhr.responseText) as { token?: string };
         const token = tokenResponse.token;
 
@@ -263,7 +264,7 @@ class ChatController {
       }
 
       const xhr = await ChatApi.getChatUsers(resolvedChatId);
-      if (xhr.status !== 200) {
+      if (xhr.status !== HttpStatus.Ok) {
         throw xhr;
       }
 

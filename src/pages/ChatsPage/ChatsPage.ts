@@ -36,10 +36,12 @@ type TChatsPageProps = {
 
 export default class ChatsPage extends Block {
   private readonly historyPageSize = 20;
+  private readonly onStoreUpdatedHandler = this.onStoreUpdated.bind(this);
   private isHistoryLoading = false;
   private hasMoreHistory = true;
   private preserveScrollOnNextUpdate = false;
   private previousMessagesContainer: HTMLElement | null = null;
+  private isStoreSubscribed = false;
 
   private onStoreUpdated() {
     const chats = store.getState().chats ?? [];
@@ -189,7 +191,40 @@ export default class ChatsPage extends Block {
 
     this.syncChatsData(chats, selectedChat, messages);
     this.setProps({ isChatSettingsMenuOpen: false, isChatActionPopupOpen: false, chatActionType: null });
-    store.on(StoreEvents.Updated, this.onStoreUpdated.bind(this));
+    this.subscribeToStore();
+  }
+
+  private subscribeToStore() {
+    if (this.isStoreSubscribed) {
+      return;
+    }
+
+    store.on(StoreEvents.Updated, this.onStoreUpdatedHandler);
+    this.isStoreSubscribed = true;
+  }
+
+  private unsubscribeFromStore() {
+    if (!this.isStoreSubscribed) {
+      return;
+    }
+
+    store.off(StoreEvents.Updated, this.onStoreUpdatedHandler);
+    this.isStoreSubscribed = false;
+  }
+
+  show() {
+    super.show();
+    this.subscribeToStore();
+    this.onStoreUpdated();
+  }
+
+  hide() {
+    this.unsubscribeFromStore();
+    if (this.previousMessagesContainer) {
+      this.previousMessagesContainer.removeEventListener('scroll', this.onMessagesScroll);
+      this.previousMessagesContainer = null;
+    }
+    super.hide();
   }
 
   onSendMessage(e: Event) {

@@ -2,18 +2,21 @@ import { baseUrl } from './baseURL';
 import HTTPTransport from '../httpTransport/httpTransport';
 
 const base = baseUrl;
-const userApiInstance = new HTTPTransport();
 
-export class UserApi {
-  static updatePassword(data: Record<string, unknown>) {
-    return userApiInstance.put(`${base}/user/password`, { data });
+export class UserApiClient {
+  constructor(private readonly http: HTTPTransport = new HTTPTransport()) {}
+
+  updatePassword(data: Record<string, unknown>) {
+    return this.http.put(`${base}/user/password`, { data });
   }
 
-  static updateProfile(data: Record<string, unknown>) {
-    return userApiInstance.put(`${base}/user/profile`, { data });
+  updateProfile(data: Record<string, unknown>) {
+    return this.http.put(`${base}/user/profile`, { data });
   }
 
-  static updateProfileAvatar(data: FormData) {
-    return userApiInstance.put(`${base}/user/profile/avatar`, { data });
+  updateProfileAvatar(data: FormData) {
+    return this.http.put(`${base}/user/profile/avatar`, { data });
   }
 }
+
+export const UserApi = new UserApiClient();
