@@ -29,6 +29,8 @@ type TChatsPageProps = {
   selectedChat?: TChat | null;
   selectedChatDisplayName?: string;
   chatMessages?: Array<{ text: string; dateTime: string; type: 'incoming' | 'outgoing' }>;
+  hasChatMessages?: boolean;
+  isChatMessagesLoading?: boolean;
   isChatSettingsMenuOpen?: boolean;
   isChatActionPopupOpen?: boolean;
   chatActionType?: ChatAction | null;
@@ -42,20 +44,18 @@ export default class ChatsPage extends Block {
   private preserveScrollOnNextUpdate = false;
   private previousMessagesContainer: HTMLElement | null = null;
   private isStoreSubscribed = false;
+  private selectChatRequestId = 0;
 
   private onStoreUpdated() {
     const chats = store.getState().chats ?? [];
     const messages = store.getState().messages ?? [];
-    const currentSelectedChatId = (this.props.selectedChat as TChat | null | undefined)?.id;
-    const selectedChat =
+    const currentSelectedChatId = store.getState().activeChat?.id;
+    const selectedChatFromStore =
       chats.find((chat) => chat.id === currentSelectedChatId) ?? chats.find((chat) => chat.isActive) ?? null;
+    const selectedChatFromProps = this.props.selectedChat as TChat | null | undefined;
+    void (selectedChatFromStore ?? selectedChatFromProps ?? null);
 
-    if (typeof currentSelectedChatId === 'number' && !selectedChat) {
-      void this.resetUnavailableChatState();
-      return;
-    }
-
-    this.syncChatsData(chats, selectedChat, messages);
+    this.syncChatsData(chats, messages);
   }
 
   constructor(props: TChatsPageProps = {}) {
@@ -65,7 +65,8 @@ export default class ChatsPage extends Block {
   init() {
     const chats = store.getState().chats ?? [];
     const messages = store.getState().messages ?? [];
-    const selectedChat = (this.props.selectedChat as TChat | null | undefined) ?? null;
+    const activeChatId = store.getState().activeChat?.id;
+    const selectedChat = chats.find((chat) => chat.id === activeChatId) ?? chats.find((chat) => chat.isActive) ?? null;
 
     const validateMessageBind = validateMessage.bind(this);
     const onSendMessageBind = this.onSendMessage.bind(this);
@@ -189,8 +190,13 @@ export default class ChatsPage extends Block {
       ChatActionPopup: ChatActionPopupComponent,
     };
 
-    this.syncChatsData(chats, selectedChat, messages);
-    this.setProps({ isChatSettingsMenuOpen: false, isChatActionPopupOpen: false, chatActionType: null });
+    this.syncChatsData(chats, messages);
+    this.setProps({
+      isChatMessagesLoading: false,
+      isChatSettingsMenuOpen: false,
+      isChatActionPopupOpen: false,
+      chatActionType: null,
+    });
     this.subscribeToStore();
   }
 
@@ -279,32 +285,21 @@ export default class ChatsPage extends Block {
   }
 
   private async onSelectChat(chatId: number) {
-    const chats = this.props.chats as TChat[] | undefined;
+    const requestId = ++this.selectChatRequestId;
 
-    if (!chats) return;
-
-    const selectedChat = chats.find((chat) => chat.id === chatId) ?? null;
+    this.subscribeToStore();
     store.setActiveChat(chatId);
+    store.clearMessages();
+    const chats = (store.getState().chats ?? []) as TChat[];
+    const selectedChat = chats.find((chat) => chat.id === chatId);
 
-    if (selectedChat) {
-      const selectedChatUsername = selectedChat.title;
-      const commonProps = {
-        src: this.getAvatarSrc(selectedChat.avatar),
-        alt: selectedChatUsername,
-        username: selectedChatUsername,
-      };
-
-      if (!this.children.SelectedChatAvatar) {
-        this.children.SelectedChatAvatar = new Avatar({
-          ...commonProps,
-          class: 'chats__chat-avatar',
-        });
-      } else {
-        this.children.SelectedChatAvatar.setProps(commonProps);
-      }
-    }
-
-    this.setProps({ selectedChat, isChatSettingsMenuOpen: false });
+    this.setProps({
+      selectedChat,
+      selectedChatDisplayName: selectedChat?.title ?? '',
+      isChatMessagesLoading: true,
+      isChatSettingsMenuOpen: false,
+    });
+    this.syncChatsData(chats, []);
 
     this.children.ChatSettingsMenu.setProps({ isOpen: false });
     this.onCloseChatActionPopup();
@@ -312,12 +307,23 @@ export default class ChatsPage extends Block {
     this.isHistoryLoading = false;
     this.preserveScrollOnNextUpdate = false;
 
-    const token = await ChatController.getToken(chatId);
-    if (!token) {
-      return;
-    }
+    try {
+      const token = await ChatController.getToken(chatId);
+      if (requestId !== this.selectChatRequestId || !token) {
+        return;
+      }
 
-    await wsService.openConnection(chatId, token);
+      await wsService.openConnection(chatId, token);
+      if (requestId !== this.selectChatRequestId) {
+        return;
+      }
+
+      this.syncChatsData(store.getState().chats ?? [], store.getState().messages ?? []);
+    } finally {
+      if (requestId === this.selectChatRequestId) {
+        this.setProps({ isChatMessagesLoading: false });
+      }
+    }
   }
 
   private async onCreateNewChat() {
@@ -435,11 +441,11 @@ export default class ChatsPage extends Block {
       await ChatController.updateChatAvatar(avatarFile);
     }
 
-    if (chatActionType === ChatAction.AddUser && typeof userId === 'number') {
+    if (chatActionType === ChatAction.AddUser && !!userId) {
       await ChatController.addUser({ userId });
     }
 
-    if (chatActionType === ChatAction.DeleteUser && typeof userId === 'number') {
+    if (chatActionType === ChatAction.DeleteUser && !!userId) {
       await ChatController.deleteUser({ userId });
     }
 
@@ -450,26 +456,10 @@ export default class ChatsPage extends Block {
     this.onCloseChatActionPopup();
   }
 
-  private async resetUnavailableChatState() {
-    this.setProps({
-      selectedChat: null,
-      selectedChatDisplayName: '',
-      chatMessages: [],
-      isChatSettingsMenuOpen: false,
-    });
-
-    this.children.ChatSettingsMenu.setProps({ isOpen: false });
-    await wsService.closeConnection();
-    this.isHistoryLoading = false;
-    this.hasMoreHistory = true;
-    this.preserveScrollOnNextUpdate = false;
-    store.clearActiveChat();
-    store.clearMessages();
-  }
-
   private onMessagesScroll = () => {
-    const selectedChatId = (this.props.selectedChat as TChat | null | undefined)?.id;
-    if (typeof selectedChatId !== 'number' || this.isHistoryLoading || !this.hasMoreHistory) {
+    const selectedChatId = store.getState().activeChat?.id;
+
+    if (!selectedChatId || this.isHistoryLoading || !this.hasMoreHistory) {
       return;
     }
 
@@ -559,7 +549,26 @@ export default class ChatsPage extends Block {
     });
   }
 
-  private syncChatsData(chats: TChat[], selectedChat: TChat | null, messages: TSocketMessage[] = []) {
+  private syncChatsData(chats: TChat[], messages: TSocketMessage[] = []) {
+    const storedChatId = store.getState().activeChat?.id;
+    const selectedChatFromProps = this.props.selectedChat as TChat | null | undefined;
+    const selectedChatDisplayNameFromProps =
+      typeof this.props.selectedChatDisplayName === 'string' ? this.props.selectedChatDisplayName : '';
+
+    const activeChatFromStore = storedChatId ? (chats.find((chat) => chat.id === storedChatId) ?? null) : null;
+
+    const activeChat =
+      activeChatFromStore ??
+      selectedChatFromProps ??
+      chats.find((chat) => chat.isActive) ??
+      (storedChatId
+        ? ({
+            id: storedChatId,
+            title: selectedChatDisplayNameFromProps || 'Chat',
+          } as TChat)
+        : null) ??
+      null;
+
     const chatsWithMeta = chats.map((chat) => {
       const messagePreview = chat.last_message?.content || '';
       const lastMessageDateTime = chat.last_message?.time ? new Date(chat.last_message.time).toLocaleDateString() : '';
@@ -588,10 +597,12 @@ export default class ChatsPage extends Block {
         lastMessageDateTime: chat.lastMessageDateTime,
         messagePreview: chat.messagePreview,
         unreadMessagesCountLabel: chat.unreadMessagesCountLabel,
-        selected: selectedChat?.id === chat.id,
+        selected: activeChat?.id === chat.id,
         onClick: () => {
-          if (typeof chat.id === 'number') {
-            void this.onSelectChat(chat.id);
+          const clickedChatId = chat.id;
+
+          if (clickedChatId) {
+            void this.onSelectChat(clickedChatId);
           }
         },
       });
@@ -604,26 +615,37 @@ export default class ChatsPage extends Block {
       ...this.children,
       ...chatCardChildren,
     };
+    const mappedMessages = this.mapChatMessages(messages);
 
     this.setProps({
       chats: chatsWithMeta,
-      selectedChat,
-      selectedChatDisplayName: selectedChat ? selectedChat.title : '',
-      chatMessages: this.mapChatMessages(messages),
+      selectedChat: activeChat,
+      selectedChatDisplayName: activeChat ? activeChat.title : '',
+      chatMessages: mappedMessages,
+      hasChatMessages: mappedMessages.length > 0,
       chatCards: chatCardStubs,
     });
 
-    if (selectedChat && this.children.SelectedChatAvatar) {
-      this.children.SelectedChatAvatar.setProps({
-        src: this.getAvatarSrc(selectedChat.avatar),
-        alt: selectedChat.title,
-        username: selectedChat.title,
-      });
+    if (activeChat) {
+      const avatarProps = {
+        src: this.getAvatarSrc(activeChat.avatar),
+        alt: activeChat.title,
+        username: activeChat.title,
+      };
+
+      if (!this.children.SelectedChatAvatar) {
+        this.children.SelectedChatAvatar = new Avatar({
+          ...avatarProps,
+          class: 'chats__chat-avatar',
+        });
+      } else {
+        this.children.SelectedChatAvatar.setProps(avatarProps);
+      }
     }
 
     this.attachMessagesScrollListener();
 
-    if (selectedChat) {
+    if (activeChat) {
       if (!this.preserveScrollOnNextUpdate) {
         this.scrollMessagesToBottom();
       }

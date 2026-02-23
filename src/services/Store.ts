@@ -92,13 +92,14 @@ class Store extends EventBus<StoreEventMap> {
   }
 
   public setActiveChat(chatId: number) {
+    const normalizedChatId = Number(chatId);
     const chats =
       this.state.chats?.map((chat) => ({
         ...chat,
-        isActive: chat.id === chatId,
-        unread_count: chat.id === chatId ? 0 : chat.unread_count,
+        isActive: Number(chat.id) === normalizedChatId,
+        unread_count: Number(chat.id) === normalizedChatId ? 0 : chat.unread_count,
       })) ?? [];
-    const activeChat: TActiveChat = { id: chatId };
+    const activeChat: TActiveChat = { id: normalizedChatId };
     this.set({ chats, activeChat });
   }
 
