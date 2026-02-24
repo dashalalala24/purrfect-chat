@@ -38,20 +38,38 @@
       <div class='chats__header chats__chat-header'>
         <div class='chats__chat-header-user'>
           {{{SelectedChatAvatar}}}
-          <h2 class='chats__chat-username'>{{selectedChat.user.username}}</h2>
+          <h2 class='chats__chat-username'>{{selectedChatDisplayName}}</h2>
         </div>
 
-         {{{ChatSettingsButton}}}
+        <div class='chats__chat-settings'>
+          {{{ChatSettingsButton}}}
+          {{{ChatSettingsMenu}}}
+        </div>
       </div>
 
       <div class='chats__chat-messages'>
-        <p class='chats__chat-messages_date'>Today<p>
-        {{#each selectedChat.messages}}
-          <div class='chats__message chats__message_{{type}}'>
-            <p class='chats__message-text'>{{text}}</p>
-            <span class='chats__message-time'>{{dateTime}}</span>
+        {{#if isChatMessagesLoading}}
+          <div class='chats__chat-loader' aria-label='Messages are loading'>
+            <span class='chats__chat-loader-spinner' aria-hidden='true'></span>
+            <p class='chats__chat-loader-text'>Loading messages...</p>
           </div>
-        {{/each}}
+        {{else}}
+          {{#if hasChatMessages}}
+            <p class='chats__chat-messages_date'>Today<p>
+            {{#each chatMessages}}
+              <div class='chats__message chats__message_{{type}}'>
+                <p class='chats__message-text'>{{text}}</p>
+                <span class='chats__message-time'>{{dateTime}}</span>
+              </div>
+            {{/each}}
+          {{else}}
+            <div class='chats__chat-empty'>
+              <div class='chats__chat-empty-image'></div>
+              <h3 class='chats__chat-empty-title'>No messages yet</h3>
+              <p class='chats__chat-empty-text'>Start the conversation with the first message.</p>
+            </div>
+          {{/if}}
+        {{/if}}
       </div>
 
       <form id='chat-message-form' class='chats__footer chats__chat-message-input-container'>
@@ -66,5 +84,6 @@
       <p class='chats_chat-empty-text'>Pick a conversation from the list or start a new one to connect with friends!</p>
     </div>
   {{/if}}
-  
+
+  {{{ChatActionPopup}}}
 </main>

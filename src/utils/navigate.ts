@@ -1,25 +1,39 @@
 import Handlebars from 'handlebars';
 
-import { chatsMock } from '../mocks/chats';
-import { profileMock } from '../mocks/profile';
-import * as Pages from '../pages';
+type TPageContext = Record<string, unknown>;
 
-type PageComponent = new (props: any) => {
+type PageComponent = new (props: TPageContext) => {
   getContent: () => HTMLElement;
 };
 
-const pages: { [key: string]: [PageComponent, object] } = {
-  routes: [Pages.RoutesPage, {}],
-  signInPage: [Pages.SignInPage, {}],
-  signUpPage: [Pages.SignUpPage, {}],
-  chatsPage: [Pages.ChatsPage, { chats: chatsMock, selectedChat: null }],
-  profilePage: [Pages.ProfilePage, { profile: profileMock, isEditMode: false }],
-  notFoundPage: [Pages.NotFoundPage, {}],
-  serverErrorPage: [Pages.ServerErrorPage, {}],
+type PageLoader = () => Promise<PageComponent | string>;
+
+const pages: { [key: string]: { loader: PageLoader; context: TPageContext } } = {
+  signInPage: { loader: () => import('../pages/SignInPage').then((m) => m.SignInPage), context: {} },
+  signUpPage: { loader: () => import('../pages/SignUpPage').then((m) => m.SignUpPage), context: {} },
+  chatsPage: {
+    loader: () => import('../pages/ChatsPage').then((m) => m.ChatsPage),
+    context: { chats: {}, selectedChat: null },
+  },
+  profilePage: {
+    loader: () => import('../pages/ProfilePage').then((m) => m.ProfilePage),
+    context: { profile: {}, isEditMode: false },
+  },
+  notFoundPage: { loader: () => import('../pages/NotFoundPage').then((m) => m.NotFoundPage), context: {} },
+  serverErrorPage: {
+    loader: () => import('../pages/ServerErrorPage').then((m) => m.ServerErrorPage),
+    context: {},
+  },
 };
 
-export default function navigate(page: string) {
-  const [Source, context] = pages[page];
+export default async function navigate(page: string) {
+  const entry = pages[page];
+  if (!entry) {
+    return;
+  }
+
+  const { loader, context } = entry;
+  const Source = await loader();
 
   const container = document.getElementById('app')!;
 
@@ -41,7 +55,7 @@ document.addEventListener('click', (e) => {
   const page = target.getAttribute('id');
 
   if (page) {
-    navigate(page);
+    void navigate(page);
 
     e.preventDefault();
     e.stopImmediatePropagation();

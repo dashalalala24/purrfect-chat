@@ -1,5 +1,3 @@
-export { RoutesPage } from './RoutesPage';
-
 export { SignInPage } from './SignInPage';
 export { SignUpPage } from './SignUpPage';
 

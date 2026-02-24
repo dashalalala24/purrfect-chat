@@ -99,7 +99,7 @@ export default defineConfig([
       '@typescript-eslint/no-non-null-asserted-optional-chain': 'off',
       '@typescript-eslint/consistent-type-imports': 'warn',
       '@typescript-eslint/ban-ts-comment': ['warn', { 'ts-expect-error': false }],
-      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-this-alias': 'off',
       '@typescript-eslint/no-restricted-types': [
         'warn',

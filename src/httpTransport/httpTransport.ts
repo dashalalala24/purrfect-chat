@@ -30,48 +30,56 @@ function queryStringify(data: Record<string, unknown>): string {
 type Options = {
   method: METHOD;
   headers?: Record<string, string>;
-  data?: Record<string, unknown>;
+  data?: Record<string, unknown> | FormData;
 };
 
 type OptionsWithoutMethod = Omit<Options, 'method'>;
 
+type HTTPMethod = <R = XMLHttpRequest>(url: string, options?: OptionsWithoutMethod) => Promise<R>;
+
 export default class HTTPTransport {
-  get(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
-    return this.request(url, { ...options, method: METHOD.GET });
+  private createMethod(method: METHOD): HTTPMethod {
+    return (url, options = {}) => this.request(url, { ...options, method });
   }
 
-  post(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
-    return this.request(url, { ...options, method: METHOD.POST });
-  }
+  get: HTTPMethod = this.createMethod(METHOD.GET);
 
-  put(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
-    return this.request(url, { ...options, method: METHOD.PUT });
-  }
+  post: HTTPMethod = this.createMethod(METHOD.POST);
 
-  delete(url: string, options: OptionsWithoutMethod = {}): Promise<XMLHttpRequest> {
-    return this.request(url, { ...options, method: METHOD.DELETE });
-  }
+  put: HTTPMethod = this.createMethod(METHOD.PUT);
 
-  request(url: string, options: Options = { method: METHOD.GET }, timeout = 5000): Promise<XMLHttpRequest> {
+  delete: HTTPMethod = this.createMethod(METHOD.DELETE);
+
+  request = <R = XMLHttpRequest>(
+    url: string,
+    options: Options = { method: METHOD.GET },
+    timeout = 5000,
+  ): Promise<R> => {
     const { headers = {}, method, data } = options;
+    const requestHeaders = { ...headers };
 
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
       let requestUrl = url;
 
-      if (method === METHOD.GET && data) {
+      if (method === METHOD.GET && data && !(data instanceof FormData)) {
         requestUrl = `${url}?${queryStringify(data)}`;
       }
 
       xhr.open(method, requestUrl);
       xhr.timeout = timeout;
+      xhr.withCredentials = true;
 
-      Object.entries(headers).forEach(([key, value]) => {
+      if (data && !(data instanceof FormData) && !requestHeaders['Content-Type']) {
+        requestHeaders['Content-Type'] = 'application/json';
+      }
+
+      Object.entries(requestHeaders).forEach(([key, value]) => {
         xhr.setRequestHeader(key, value);
       });
 
-      xhr.onload = () => resolve(xhr);
+      xhr.onload = () => resolve(xhr as R);
 
       xhr.onabort = reject;
       xhr.onerror = reject;
@@ -79,9 +87,11 @@ export default class HTTPTransport {
 
       if (method === METHOD.GET || !data) {
         xhr.send();
+      } else if (data instanceof FormData) {
+        xhr.send(data);
       } else {
         xhr.send(JSON.stringify(data));
       }
     });
-  }
+  };
 }

@@ -20,10 +20,6 @@ export default function validateConfirmPassword(this: TConfirmPasswordValidation
 
   const inputValue = target.value.trim();
 
-  // if (!inputValue.length) {
-  //   return;
-  // }
-
   const passwordValue = getInputValue(this.children.PasswordInput);
   const isValid = inputValue.length > 0 && inputValue === passwordValue;
 
@@ -32,5 +28,4 @@ export default function validateConfirmPassword(this: TConfirmPasswordValidation
   } else {
     input.setProps({ errorMessage: 'Passwords do not match', value: inputValue });
   }
-
 }

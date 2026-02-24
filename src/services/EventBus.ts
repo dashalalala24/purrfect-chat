@@ -1,28 +1,43 @@
-type TListener = (...args: any[]) => void;
+type TEventMap = Record<string, (...args: never[]) => void>;
 
-type TListenerMap = Record<string, TListener[]>;
-
-class EventBus {
-  private listeners: TListenerMap;
+class EventBus<Events extends TEventMap> {
+  listeners: { [K in keyof Events]?: Events[K][] } = {};
 
   constructor() {
     this.listeners = {};
   }
 
-  on(event: string, callback: TListener): void {
+  on<K extends keyof Events>(event: K, callback: Events[K]): void {
+    if (typeof callback !== 'function') {
+      console.warn(`EventBus: ignored non-function listener for event "${String(event)}"`, callback);
+      return;
+    }
+
     (this.listeners[event] ||= []).push(callback);
   }
 
-  off(event: string, callback: TListener): void {
-    if (!this.listeners[event]) throw new Error(`No event: ${event}`);
+  off<K extends keyof Events>(event: K, callback: Events[K]): void {
+    if (!this.listeners[event]) {
+      return;
+    }
 
     this.listeners[event] = this.listeners[event].filter((l) => l !== callback);
   }
 
-  emit(event: string, ...args: unknown[]): void {
-    if (!this.listeners[event]) throw new Error(`No event: ${event}`);
+  emit<K extends keyof Events>(event: K, ...args: Parameters<Events[K]>): void {
+    const listeners = this.listeners[event];
+    if (!listeners || listeners.length === 0) {
+      return;
+    }
 
-    this.listeners[event].forEach((listener) => listener(...args));
+    listeners.forEach((listener) => {
+      if (typeof listener !== 'function') {
+        console.warn(`EventBus: skipped non-function listener for event "${String(event)}"`, listener);
+        return;
+      }
+
+      listener(...args);
+    });
   }
 }
 
