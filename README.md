@@ -1,40 +1,68 @@
-# Purrfect Chat. Спринт 1
+# Purrfect Chat
 
-Учебный мессенджер: страницы авторизации и регистрации, чат, страница профиля, ошибки 404 и 5хх. Проект собран с помощью Handlebars и Vite.
+Учебный SPA-мессенджер на TypeScript с кастомной компонентной системой (`Block`), роутером, HTTP-транспортом и страницами авторизации, профиля, чатов, 404 и 5xx.
 
-## Ссылка на Netlify
+## Функциональность
 
-purrfect-chat.netlify.app
+- Авторизация и регистрация.
+- Просмотр списка чатов и отправка сообщений.
+- Работа с профилем пользователя (включая аватар и редактирование данных).
+- Клиентский роутинг.
+- Обработка ошибок (страницы 404 и 500).
+- Unit-тесты для ключевых модулей: `Router`, `Block`, `HTTPTransport`.
 
-## Ссылка на прототипы экранов
-
-https://www.figma.com/design/DODcit19umTYc0WJdGHJ1w/Untitled?node-id=0-1&p=f&t=2fyJf9Iomdr3u6C4-0
-
-## Стек
+## Технологии
 
 - TypeScript
 - Handlebars
 - Vite
 - PostCSS
+- Express
+- Mocha + Chai + Sinon + JSDOM
+- ESLint + Stylelint
+- Husky
 
-## Установка и запуск
+## Ссылки
+
+- Netlify: `purrfect-chat.netlify.app`
+- Прототипы: `https://www.figma.com/design/DODcit19umTYc0WJdGHJ1w/Untitled?node-id=0-1&p=f&t=2fyJf9Iomdr3u6C4-0`
+
+## Установка
 
 ```bash
 npm install
 ```
 
+## Запуск проекта
+
 ```bash
 npm run dev
 ```
 
-## Скрипты
+Приложение поднимется в dev-режиме через Vite.
 
-- `npm run dev` — локальная разработка
-- `npm run build` — сборка проекта
-- `npm run preview` — предпросмотр сборки
-- `npm start` — билд + запуск сервера
+## Сборка и запуск production-версии
 
-## Примеры использования
+```bash
+npm run build
+```
 
-- Страница профиля: загрузка аватара, переключение в режим редактирования.
-- Чаты: список чатов и форма отправки сообщения.
+```bash
+npm start
+```
+
+`npm start` выполняет сборку и запускает Node-сервер.
+
+## Тесты
+
+Запуск всех unit-тестов:
+
+```bash
+npm test
+```
+
+Тесты лежат рядом с тестируемыми модулями:
+
+- `src/services/Router.test.ts`
+- `src/services/Block.test.ts`
+- `src/httpTransport/httpTransport.test.ts`
