@@ -1,0 +1,6 @@
+{
+  "extension": ["ts"],
+  "file": ["./mochaSetup.js"],
+  "node-option": ["loader=ts-node/esm", "experimental-specifier-resolution=node"],
+  "spec": ["src/**/*.test.ts"]
+}
